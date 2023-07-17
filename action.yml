@@ -1,5 +1,5 @@
 name: 'Release to Maven Central'
-description: 'Builds, publishes to Maven Central, generates the change log, and creates a GitHub release'
+description: 'Builds, publishes, generates the change log, and creates a GitHub release'
 inputs:
   version:
     description: 'The new version to publish'
@@ -13,11 +13,11 @@ inputs:
   gpg-signing-password:
     description: 'The password of the private GPG key'
     required: true
-  ossrh-user-token:
-    description: 'The OSSRH user token to use to publish to OSSRH Sonatype'
+  sonatype-username:
+    description: 'The username to connect to the Sonatype Nexus (e.g. OSSRH for Maven Central)'
     required: true
-  ossrh-key:
-    description: 'The OSSRH key to use to publish to OSSRH Sonatype'
+  sonatype-password:
+    description: 'The password to connect to the Sonatype Nexus (e.g. OSSRH for Maven Central)'
     required: true
 runs:
   using: "composite"
@@ -33,8 +33,8 @@ runs:
           ORG_GRADLE_PROJECT_signingPassword: ${{ inputs.gpg-signing-password }}
           # Credentials implicitly read by the gradle-nexus-publish-plugin
           # https://github.com/gradle-nexus/publish-plugin#publishing-to-maven-central-via-sonatype-ossrh
-          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ inputs.ossrh-user-token }}
-          ORG_GRADLE_PROJECT_sonatypePassword: ${{ inputs.ossrh-key }}
+          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ inputs.sonatype-username }}
+          ORG_GRADLE_PROJECT_sonatypePassword: ${{ inputs.sonatype-password }}
         with:
           arguments: |
             check
