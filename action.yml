@@ -1,5 +1,8 @@
 name: 'Release to Maven Central'
 description: 'Builds, publishes, generates the change log, and creates a GitHub release'
+branding:
+  icon: 'arrow-up-circle'
+  color: 'red'
 inputs:
   version:
     description: 'The new version to publish'
