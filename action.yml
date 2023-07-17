@@ -4,7 +4,7 @@ inputs:
   version:
     description: 'The new version to publish'
     required: true
-  token:
+  github-token:
     description: 'The GitHub token to access issues for the change log generation'
     required: true
   gpg-signing-key:
@@ -26,7 +26,7 @@ runs:
         uses: gradle/gradle-build-action@v2
         env:
           # For changelog generation
-          GITHUB_TOKEN: ${{ inputs.token }}
+          GITHUB_TOKEN: ${{ inputs.github-token }}
           # GPG keys for signing plugin (sign maven artifacts)
           # see https://docs.gradle.org/current/userguide/signing_plugin.html#sec:in-memory-keys
           ORG_GRADLE_PROJECT_signingKey: ${{ inputs.gpg-signing-key }}
