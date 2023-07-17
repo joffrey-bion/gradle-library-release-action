@@ -1,0 +1,59 @@
+name: 'Release to Maven Central'
+description: 'Builds, publishes to Maven Central, generates the change log, and creates a GitHub release'
+inputs:
+  version:
+    description: 'The new version to publish'
+    required: true
+  token:
+    description: 'The GitHub token to access issues for the change log generation'
+    required: true
+  gpg-signing-key:
+    description: 'The ASCII-armored private GPG key to sign artifacts'
+    required: true
+  gpg-signing-password:
+    description: 'The password of the private GPG key'
+    required: true
+  ossrh-user-token:
+    description: 'The OSSRH user token to use to publish to OSSRH Sonatype'
+    required: true
+  ossrh-key:
+    description: 'The OSSRH key to use to publish to OSSRH Sonatype'
+    required: true
+runs:
+  using: "composite"
+  steps:
+      - name: Build and publish to OSS Sonatype and then Maven Central
+        uses: gradle/gradle-build-action@v2
+        env:
+          # For changelog generation
+          GITHUB_TOKEN: ${{ inputs.token }}
+          # GPG keys for signing plugin (sign maven artifacts)
+          # see https://docs.gradle.org/current/userguide/signing_plugin.html#sec:in-memory-keys
+          ORG_GRADLE_PROJECT_signingKey: ${{ inputs.gpg-signing-key }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ inputs.gpg-signing-password }}
+          # Credentials implicitly read by the gradle-nexus-publish-plugin
+          # https://github.com/gradle-nexus/publish-plugin#publishing-to-maven-central-via-sonatype-ossrh
+          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ inputs.ossrh-user-token }}
+          ORG_GRADLE_PROJECT_sonatypePassword: ${{ inputs.ossrh-key }}
+        with:
+          arguments: |
+            check
+            generateChangelog
+            publishToSonatype
+            closeAndReleaseSonatypeStagingRepository
+            -Pversion=${{ inputs.version }}
+
+      - name: Commit and push change log
+        id: changelog-commit
+        run: |
+          git add CHANGELOG.md
+          git commit -m "Version ${{ inputs.version }}"
+          git push
+          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Create release and tag
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ inputs.version }}
+          target_commitish: ${{ steps.changelog-commit.outputs.sha }}
+          body_path: build/reports/changelog/latest-release-body.md
