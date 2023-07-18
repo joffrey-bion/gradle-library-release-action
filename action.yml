@@ -1,4 +1,4 @@
-name: 'Release to Maven Central'
+name: 'Gradle library release'
 description: 'Builds, publishes, generates the change log, and creates a GitHub release'
 branding:
   icon: 'arrow-up-circle'
