@@ -41,7 +41,7 @@ job:
             java-version: 17
   
         - name: Release
-          uses: joffrey-bion/library-release-action@v1
+          uses: joffrey-bion/gradle-library-release-action@v1
           with:
             version: ${{ inputs.version }}
             github-token: ${{ secrets.GITHUB_TOKEN }}
