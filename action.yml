@@ -22,6 +22,13 @@ inputs:
   sonatype-password:
     description: 'The password to connect to the Sonatype Nexus (e.g. OSSRH for Maven Central)'
     required: true
+output:
+  changelog-path:
+    description: "The path to the generated changelog file"
+    value: CHANGELOG.md
+  release-notes-path:
+    description: "The path to the generated release notes"
+    value: build/reports/changelog/latest-release-body.md
 runs:
   using: "composite"
   steps:
