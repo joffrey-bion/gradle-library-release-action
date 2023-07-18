@@ -1,4 +1,4 @@
-# library-release-action
+# gradle-library-release-action
 
 A GitHub action to automate the following:
 
