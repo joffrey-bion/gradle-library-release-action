@@ -22,7 +22,7 @@ inputs:
   sonatype-password:
     description: 'The password to connect to the Sonatype Nexus (e.g. OSSRH for Maven Central)'
     required: true
-output:
+outputs:
   changelog-path:
     description: "The path to the generated changelog file"
     value: CHANGELOG.md
@@ -55,6 +55,7 @@ runs:
 
       - name: Commit and push change log
         id: changelog-commit
+        shell: bash
         run: |
           git add CHANGELOG.md
           git commit -m "Version ${{ inputs.version }}"
