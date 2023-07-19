@@ -9,6 +9,7 @@ inputs:
     required: true
   github-token:
     description: 'The GitHub token to access issues for the change log generation'
+    default: ${{ github.token }}
     required: true
   gpg-signing-key:
     description: 'The ASCII-armored private GPG key to sign artifacts'
