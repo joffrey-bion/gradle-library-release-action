@@ -27,26 +27,26 @@ on:
       version:
         description: "New version"
         required: true
-job:
+jobs:
   release:
     runs-on: ubuntu-latest
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v3
-  
-        - name: Set up JDK 17
-          uses: actions/setup-java@v3
-          with:
-            distribution: 'temurin'
-            java-version: 17
-  
-        - name: Release
-          uses: joffrey-bion/gradle-library-release-action@v1
-          with:
-            version: ${{ inputs.version }}
-            github-token: ${{ secrets.GITHUB_TOKEN }}
-            gpg-signing-key: ${{ secrets.GPG_SECRET_ASCII_ARMORED }}
-            gpg-signing-password: ${{ secrets.GPG_PASSWORD }}
-            sonatype-username: ${{ secrets.OSSRH_USER_TOKEN }}
-            sonatype-password: ${{ secrets.OSSRH_KEY }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 17
+
+      - name: Release
+        uses: joffrey-bion/gradle-library-release-action@v1
+        with:
+          version: ${{ inputs.version }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          gpg-signing-key: ${{ secrets.GPG_SECRET_ASCII_ARMORED }}
+          gpg-signing-password: ${{ secrets.GPG_PASSWORD }}
+          sonatype-username: ${{ secrets.OSSRH_USER_TOKEN }}
+          sonatype-password: ${{ secrets.OSSRH_KEY }}
 ```
