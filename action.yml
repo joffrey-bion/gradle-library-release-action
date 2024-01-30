@@ -33,8 +33,10 @@ outputs:
 runs:
   using: "composite"
   steps:
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+
       - name: Build and publish to OSS Sonatype and then Maven Central
-        uses: gradle/gradle-build-action@v2
         env:
           # For changelog generation
           GITHUB_TOKEN: ${{ inputs.github-token }}
@@ -46,13 +48,8 @@ runs:
           # https://github.com/gradle-nexus/publish-plugin#publishing-to-maven-central-via-sonatype-ossrh
           ORG_GRADLE_PROJECT_sonatypeUsername: ${{ inputs.sonatype-username }}
           ORG_GRADLE_PROJECT_sonatypePassword: ${{ inputs.sonatype-password }}
-        with:
-          arguments: |
-            check
-            generateChangelog
-            publishToSonatype
-            closeAndReleaseSonatypeStagingRepository
-            -Pversion=${{ inputs.version }}
+        shell: bash
+        run: ./gradlew check generateChangelog publishToSonatype closeAndReleaseSonatypeStagingRepository -Pversion=${{ inputs.version }}
 
       - name: Commit and push change log
         id: changelog-commit
