@@ -32,16 +32,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: 17
+          java-version: 21
 
       - name: Release
-        uses: joffrey-bion/gradle-library-release-action@v1
+        uses: joffrey-bion/gradle-library-release-action@v2
         with:
           version: ${{ inputs.version }}
           gpg-signing-key: ${{ secrets.GPG_SECRET_ASCII_ARMORED }}
