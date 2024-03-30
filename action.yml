@@ -49,7 +49,14 @@ runs:
           ORG_GRADLE_PROJECT_sonatypeUsername: ${{ inputs.sonatype-username }}
           ORG_GRADLE_PROJECT_sonatypePassword: ${{ inputs.sonatype-password }}
         shell: bash
-        run: ./gradlew check generateChangelog publishToSonatype closeAndReleaseSonatypeStagingRepository -Pversion=${{ inputs.version }}
+        # There are issues with the configuration cache when publishing, hence the --no-configuration-cache argument.
+        # See https://scans.gradle.com/s/ur3xe6d353a2e for an example release build failure due to this.
+        # 1) Dokka doesn't support it (https://github.com/Kotlin/dokka/issues/1217) but they marked their tasks incompatible.
+        # 2) GitHub Changelog Generator doesn't support it (https://github.com/joffrey-bion/gradle-github-changelog/issues/92),
+        #    I marked the task as not supporting it, but it seems the extension might also cause problems.
+        # 3) The Gradle Nexus Publish Plugin doesn't support it (https://github.com/gradle-nexus/publish-plugin/issues/221)
+        #    and this may cause failures like "No staging repository with name sonatype created" during the build. 
+        run: ./gradlew check generateChangelog publishToSonatype closeAndReleaseSonatypeStagingRepository -Pversion=${{ inputs.version }} --no-configuration-cache
 
       - name: Commit and push change log
         id: changelog-commit
