@@ -23,6 +23,14 @@ inputs:
   sonatype-password:
     description: 'The password to connect to the Sonatype Nexus (e.g. OSSRH for Maven Central)'
     required: true
+  changelog-commit-username:
+    description: 'The git user.name for the change log commit author'
+    default: 'github-actions[bot]'
+    required: true
+  changelog-commit-email:
+    description: 'The git user.email for the change log commit author'
+    default: '41898282+github-actions[bot]@users.noreply.github.com'
+    required: true
 outputs:
   changelog-path:
     description: "The path to the generated changelog file"
@@ -62,6 +70,9 @@ runs:
         id: changelog-commit
         shell: bash
         run: |
+          git config --global user.name "${{ inputs.changelog-commit-username }}"
+          git config --global user.email "${{ inputs.changelog-commit-email }}"
+
           git add CHANGELOG.md
           git commit -m "Version ${{ inputs.version }}"
           git push
