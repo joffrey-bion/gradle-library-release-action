@@ -1,0 +1,56 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "New version (without v prefix)"
+        required: true
+
+run-name: "Release ${{ inputs.version }}"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create git tags
+        id: git-tags
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          FULL_VERSION="v${{ inputs.version }}"
+          MAJOR_VERSION=$(echo "$FULL_VERSION" | cut -d. -f1)
+          
+          echo "Creating tag $FULL_VERSION..."
+          git tag "$FULL_VERSION"
+  
+          echo "Updating major version tag $MAJOR_VERSION..."
+          git tag -f "$MAJOR_VERSION"
+          
+          echo "Pushing tags to remote..."
+          git push origin "$FULL_VERSION"
+          git push origin "$MAJOR_VERSION" --force
+          echo "Done."
+          
+          echo "full_tag=$FULL_VERSION" >> $GITHUB_OUTPUT
+          echo "major_tag=$MAJOR_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release for ${{ steps.git-tags.outputs.full_tag }}
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.git-tags.outputs.full_tag }}
+          release_name: ${{ steps.git-tags.outputs.full_tag }}
+
+      - name: Create GitHub Release for ${{ steps.git-tags.outputs.major_tag }}
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.git-tags.outputs.major_tag }}
+          release_name: ${{ steps.git-tags.outputs.major_tag }}
