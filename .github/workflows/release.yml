@@ -36,21 +36,12 @@ jobs:
           git push origin "$MAJOR_VERSION" --force
           echo "Done."
           
-          echo "full_tag=$FULL_VERSION" >> $GITHUB_OUTPUT
-          echo "major_tag=$MAJOR_VERSION" >> $GITHUB_OUTPUT
+          echo "full_version_tag=$FULL_VERSION" >> $GITHUB_OUTPUT
 
-      - name: Create GitHub Release for ${{ steps.git-tags.outputs.full_tag }}
+      - name: Create GitHub Release for ${{ steps.git-tags.outputs.full_version_tag }}
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.git-tags.outputs.full_tag }}
-          release_name: ${{ steps.git-tags.outputs.full_tag }}
-
-      - name: Create GitHub Release for ${{ steps.git-tags.outputs.major_tag }}
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.git-tags.outputs.major_tag }}
-          release_name: ${{ steps.git-tags.outputs.major_tag }}
+          tag_name: ${{ steps.git-tags.outputs.full_version_tag }}
+          release_name: ${{ steps.git-tags.outputs.full_version_tag }}
