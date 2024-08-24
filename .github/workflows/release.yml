@@ -24,16 +24,21 @@ jobs:
           
           FULL_VERSION="v${{ inputs.version }}"
           MAJOR_VERSION=$(echo "$FULL_VERSION" | cut -d. -f1)
+          MINOR_VERSION=$(echo "$FULL_VERSION" | cut -d. -f1,2)
           
           echo "Creating tag $FULL_VERSION..."
           git tag "$FULL_VERSION"
-  
+
+          echo "Updating minor version tag $MINOR_VERSION..."
+          git tag -f "$MINOR_VERSION"
+
           echo "Updating major version tag $MAJOR_VERSION..."
           git tag -f "$MAJOR_VERSION"
-          
+
           echo "Pushing tags to remote..."
           git push origin "$FULL_VERSION"
           git push origin "$MAJOR_VERSION" --force
+          git push origin "$MINOR_VERSION" --force
           echo "Done."
           
           echo "full_version_tag=$FULL_VERSION" >> $GITHUB_OUTPUT
