@@ -82,7 +82,9 @@ runs:
         # 2) GitHub Changelog Generator doesn't support it (https://github.com/joffrey-bion/gradle-github-changelog/issues/92),
         #    I marked the task as not supporting it, but it seems the extension might also cause problems.
         # 3) The Gradle Nexus Publish Plugin doesn't support it (https://github.com/gradle-nexus/publish-plugin/issues/221)
-        #    and this may cause failures like "No staging repository with name sonatype created" during the build. 
+        #    and this may cause failures like "No staging repository with name sonatype created" during the build.
+        # 4) The Gradle Maven Publish Plugin by Vanniktech doesn't support it because of
+        #    https://github.com/gradle/gradle/issues/22779
         run: ./gradlew check generateChangelog ${{ inputs.gradle-publish-tasks }} -Pversion=${{ inputs.version }} --no-configuration-cache ${{ inputs.extra-gradle-args }}
 
       - name: Commit and push change log

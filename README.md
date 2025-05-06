@@ -10,9 +10,16 @@ A GitHub action to automate the following:
 ## Requirements
 
 * The project must be a Gradle project
-* It must apply the [GitHub Changelog Gradle Plugin](https://github.com/joffrey-bion/gradle-github-changelog), configured with the `futureReleaseVersion` set to the current project version
-* It must apply the [Gradle Nexus Publish Plugin](https://github.com/gradle-nexus/publish-plugin), configured to publish to a Sonatype Nexus repository (usually OSSRH for publications to Maven Central)
-* It must apply the [Signing Plugin](https://docs.gradle.org/current/userguide/signing_plugin.html), configured with [ASCII-armored in-memory GPG keys](https://docs.gradle.org/current/userguide/signing_plugin.html#sec:in-memory-keys)
+* It must apply the [GitHub Changelog Gradle Plugin](https://github.com/joffrey-bion/gradle-github-changelog), 
+  configured with the `futureReleaseVersion` set to the current project version
+* It must apply either:
+  * Option 1: the [Gradle Maven Publish Plugin](https://github.com/vanniktech/gradle-maven-publish-plugin) by Vanniktech
+  * Option 2: both of the following plugins:
+    * the [Gradle Nexus Publish Plugin](https://github.com/gradle-nexus/publish-plugin), configured to publish to a
+      Sonatype Nexus repository (usually OSSRH for publications to Maven Central)
+    * the [Signing Plugin](https://docs.gradle.org/current/userguide/signing_plugin.html), configured with 
+      [ASCII-armored in-memory GPG keys](https://docs.gradle.org/current/userguide/signing_plugin.html#sec:in-memory-keys)
+      (this is automatically done by the Vanniktech plugin) 
 
 ## Usage
 
@@ -46,6 +53,8 @@ jobs:
           version: ${{ inputs.version }}
           gpg-signing-key: ${{ secrets.GPG_SECRET_ASCII_ARMORED }}
           gpg-signing-password: ${{ secrets.GPG_PASSWORD }}
-          sonatype-username: ${{ secrets.OSSRH_USER_TOKEN }}
-          sonatype-password: ${{ secrets.OSSRH_KEY }}
+          sonatype-username: ${{ secrets.OSSRH_TOKEN_USERNAME }}
+          sonatype-password: ${{ secrets.OSSRH_TOKEN_PASSWORD }}
+          # Uncomment the following if you're using the Vanniktech Gradle Maven Publish plugin:
+          #gradle-publish-tasks: publishAndReleaseToMavenCentral
 ```
